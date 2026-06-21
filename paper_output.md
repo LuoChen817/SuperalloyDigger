@@ -1,0 +1,365 @@
+# A machine learning-based alloy design system to facilitate the rational  design of high entropy alloys with enhanced hardness
+
+
+> [图表/图片内容]: Check for updates...
+
+Chen**
+
+a Department of Chemistry, College of Sciences, Shanghai University, Shanghai 200444, China b Materials Genome Institute, Shanghai University, Shanghai 200444, China c Institute of Materials, Shanghai University, Shanghai 200444, China
+
+ARTICLE INFO
+
+## ABSTRACT
+
+Article history:
+Received 1 June 2021
+Revised 24 August 2021
+Accepted 20 October 2021
+Available online 1 November 2021
+
+> **ABSTRACT**
+>
+> Trapped by time-consuming traditional trial-and-error methods and vast untapped composition space,effi ciently discovering novel high entropy alloys (HEAs) with exceptional performance remains a great challenge. Herein, we present a machine learning-based alloy design system (MADS) to facilitate the rational design of HEAs with enhanced hardness. Initially, a hardness database was constructed, and then the key features affecting the hardness of HEAs were screened out by performing a four-step feature selection. Five descriptors including the average deviation of the atomic weight (ADAW), the average deviation of the column (ADC), the average deviation of the specific volume (ADSV), the valance electron concentration (VEC), and the mean melting point $\left(\mathrm{T}_{\mathrm{m}}\right)$ were identified as the key features related to the hardness of as-cast HEAs. Furtherly, a hardness prediction model based on the support vector machine was constructed with the five features as the inputs. The Pearson correlation coeffi cients of the well-trained model reach 0.94 for both the testing set and the leave-one-out cross validation (LoocV).Subsequently, several optimized compositions recommended by inverse projection and high-throughput screening were synthesized by experiments. The best performer exhibits ultra-high hardness, which is 24.8% higher than the highest one in the original dataset. Moreover, the Shapley additive explanation (SHAP) was introduced to boost the model interpretability, which manifests that VEC plays an important role in the prediction for hardness. Notably, VEC has a positive effect on hardness when VEC < 7.5.
+
+Keywords:High entropy alloys Machine learning Feature selection Composition design Hardness
+
+© 2021 Acta Materialia Inc. Published by Elsevier Ltd. All rights reserved.
+
+6]. Unlike conventional alloys, HEAs are alloys of five or more elements alloyed in equal or approximately equal atomic ratios, where the molar percentage of each element ranges from about 5 to 35%[7,8]. To obtain more promising mechanical properties, such as ultrahigh strength combined with ductility [9-13], a growing number of composition combinations of HEAs have been studied. Nevertheless, considering that the existence of multiple principal elements and the wide range of element concentration, the number of potential compositions of HEAs tend to be much bigger than that of conventional alloys, and the regions that have been investigated hitherto are merely the tip of the iceberg.
+
+## 1. Introduction
+
+The development of materials science has been accompanied by the development of human civilization, among which metal materials have played a decisive role in human history and civilization since the Bronze Age. Typically, the traditional composition design strategy of alloys involves the addition of relatively small amounts of various elements to one principal element, such as the copper alloys. As a consequence, the intrinsic properties of the alloys depend on the principal element to a large extent. In 2004,Professor Yeh et al. [1] and Cantor et al. [2] almost simultaneously presented a new type of alloys with extraordinary performance,high entropy alloys (HEAs), which are expected to break through the performance limit of traditional materials, attracting a great deal of attention from academia and industrial communities [3–
+
+Currently, the trial-and-error method remains one of the most common approaches to discover novel materials. Whereas, when it comes to exploring the vast latent composition space of HEAs, it is quite challenging to solely rely on such an approach, just like looking for a needle in a haystack. Therefore, increasing attention has been paid to taking advantage of computational methods to guide the rational composition design of alloys, such as thermodynamic modeling, density functional theory(DfT), molecular dynamics (MD), and so on. For example, Senkov et al used the calculated phase diagram (CALPHD) approach to model phase diagrams and
+
+to predict alloy systems that might engender desirable microstructures [14,15]. Most DFT and MD calculations concentrate on calculating the phase stability, lattice parameters, electronic structure,solidification behavior of HEAs [16-18]. While these computational methods have accelerated the research process of novel HEAs to some degree, it is still somewhat impractical to fast discover novel HEAs with desired properties, considering the extensive regions of unexplored space for HEAs and unacceptable computational costs.
+
+After data preprocessing, there were 370 pieces of data left in our database, including 36 quaternary alloys, 178 quinary alloys, 132 six-component alloys, and 24 seven-component alloys (listed in Supporting Information). The data distribution and the frequency of the elements are illustrated in Fig. S1 of Supporting Information A. It should be pointed out that the data set involves ten elements in the periodic table, although none of the experimental observations includes the whole elements.
+
+In the last decade, an emerging area of materials design is the application of machine learning(ML) to facilitate the highthroughput screening of advanced materials with exceptional performance [19-27]]. Admittedly, ML can greatly reduce the number of experiments and calculations needed to explore novel materials and shorten the development cycle of advanced materials. In the field of HEAs, Wen et al. [28] employed ML and utility function to accelerate the discovery of alloy with enhanced hardness.Several researchers applied ML to predict the phase formation and some mechanical properties of HEAs with satisfactory prediction accuracy [29-38]. Nonetheless, the majority of the existing machine learning models are black-box ML models, which somewhat lack interpretability and hinder investigators from acquiring further chemical insight from models. Besides, realizing the inverse design of materials from properties to compositions is still a hard nut to crack.
+
+## (2) Model construction
+
+Feature construction is the basic and prerequisite work of ML.It is widely acknowledged that data and features determine the upper limit of ML, and models and algorithms only approach this upper limit. In this work, the candidate descriptors cover some atomic parameters that demonstrated excellent performance on diverse problems [42-44] and the phase parameters including the valance electron concentration (VeC) [45], atomic size difference (δ) [46], enthalpy of mixing(∆Hmix) [46], entropy of mixing $\left(\Delta S_{mix}\right)$ [47], mean melting point (Tm) and solid solution phase formation parameter(Ω2) [48]. Overall, there are a total of 142descriptors in our original feature pool, including 136 generated atomic features and 6 phase parameters, detailed in the Table S1.
+
+Feature selection is the next and key step in the process of machine learning after the original feature pool is prepared. The purpose of feature selection is to acquire the most representative subset from the original feature pool, which could contain necessary information with less redundancy. By utilizing the feature selection, the computation time of the model and the risk of overfitting can be reduced, the model interpretability could be enhanced to a certain extent [49,50].
+
+In the current study, a new approach called ML-based alloy design system(MADS), which comprises four modules including database establishment, model construction, composition optimization, experimental validation, was presented to guide the rational design of HEAs with enhanced hardness. To begin with, the hardness database was constructed by collecting the experimental results from relevant references. Then, the key features affecting the hardness of HEAs were figured out by utilizing four-step feature selection and were used to establish the hardness predictive model. Furthermore, the inverse projection based on pattern recognition and high-throughput screening were performed to optimize the composition of HEAs. Three sets of recommended compositions were synthesized and characterized. Among them,$\mathsf{C o}_{18}\mathsf{C r}_{7}\mathsf{F e}_{35}\mathsf{N i}_{5}\mathsf{V}_{35}$ ,a novel alloy with hardness 24.8% higher than the best one (920.2HV) in the original dataset was discovered,demonstrating the reliability and feasibility of our proposed approach. What's more, the Shapley additive explanation (SHAP) [39–41] was introduced to shine some light on the model prediction as well.
+
+Inspired by previous work [51,52], herein, we proposed a fourstep feature selection method to identify the most influential features. The procedure consists of:(a) Removing highly correlated features;(b) Removing the less important feature by utilizing random forest(RF) algorithm;(c) Forward selection; (d) Bestsubset selection. More concretely, the Pearson correlation coefficient [53] was employed in step (a) to identify features with multicollinearity. In step (b), the RF algorithm was introduced to sieve the features in view of the relative importance of the feature with respect to the target property.
+
+Modeling of machine learning aims to construct the relationship between the targeted properties and the selected features,here the machine learning model was established to predict the hardness of HEAs. The performance of the model was further boosted by optimizing the hyperparameters of the algorithm. Cross validation was carried out to refrain from overfi tting. The independent testing set was utilized to validate the generality of the welltrained model.
+
+## 2. Material and methods
+
+## 2.1. Alloy design framework
+
+Our overall framework of MADS for the discovery of HEAs with desired hardness, incorporating four major modules including database establishment, model construction, composition optimization, and experimental validation, is illustrated in Fig. 1.
+
+## (3) Compositionoptimization
+
+Based on the model obtained, we attempted to find the optimized alloy compositions with higher hardness by taking advantage of inverse projection [54] and high-throughput screening via the machine learning model available.
+
+## (1) Database establishment
+
+Data collection of high entropy alloy systems such as Al-Co-CrCu-Fe-Ni, Al-Co-Cr-Fe-Mn-Ni, etc., and their derivates. The compositions and the corresponding Vickers hardness were assemled from related references. Here, the composition is expressed by atom percentage, and the sum of atom percentage of all elements approximately equals 100%.
+
+## (4) Experimental validation
+
+To validate the prediction, the designed alloys were synthesized by arc-melting the mixtures of elements with purity higher than 99.9 wt% in high-purity Ar atmosphere. To ensure the chemical homogeneity, the melting process was repeated at least four times for each ingot. The hardness of specimens was measured by using a Vickers hardness tester (Duramin-40) at a load of 200 gf for 15 s.Nine measurements were carried out for each sample to attain homogenized hardness.
+
+Data preprocessing was carried out to eliminate the impact of process treatments on target properties. The preserved data were only those alloys synthesized by vacuum arc melting and measured in as-cast form. At the same time, some data were discarded in the light of their significant differences (relative $ error>10\%$ in different studies.
+
+
+> [图表/图片内容]: Correlation Screening Feature construction (85 features)Data 
+Collection Random Forest 
+(14 features...
+
+
+**Fig. 1. Diagram of machine learning-based alloy design system for the HEAs with desired hardness.**
+
+## 2.2. The principle of inverse projection
+
+selection and hyperparameters optimization were implemented by Python language.
+
+There are different strategies of inverse projection (IP) to map the designed sample points from the two-dimensional space back to the multi-dimensional space since there are infi nite number of solutions if the bound conditions are not given. In our previous work, the IP was carried out by using the relationships of pattern recognition called principal component analysis model as the bound conditions [54]. In this work, the IP was realized by using the relationships of pattern recognition called Fisher model and the average feature values of positive samples (Hardness > 600 HV) as the determinative conditions. Here we adopted Fisher method to classify the positive samples (Hardness > 600 HV) and the negative samples (Hardness < 600 HV). There are two relationships between the designed point in Fisher diagram and the visual sample in the multi-dimensional space as follows:
+
+Three hyperparameters including capacity parameter C, εinsensitive loss function and gamma value, were optimized when the SVR model with radial basis kernel function was constructed.The Bayesian approximation method, Hyperopt [55], was employed to optimize these hyperparameters. The optimization ranges of C,ε and gamma are [1,2000], [0.01,100], [0.001,1.5], respectively.
+
+## 3. Results
+
+In general, the composition of alloys contains massive information that is enough to construct a rough predictive model [56,57].And according to the no free lunch theorem, no machine learning algorithm is suitable for all situations. Consequently, the dataset was randomly grouped into two subsets at a ratio of 4:1for the training set and the testing set. To sieve out the most appropriate algorithm, several widely used machine learning algorithms,including multiple linear regression (MLR) [58], backpropagation artificial neural network (BPNN) [59], gradient boosting regresion (GBR) [60], RF [61], extreme gradient boosting(XGBoost) [62], support vector regression with radial basis kernel function (SVR-rbf)[63], support vector regression with linear kernel function (SVRlin) [63] and support vector regression with polynomial kernel function (SVR-poly) [63], were introduced to construct the hardness predictive model based on the elemental compositions of HEAs. The root means square error (RMSE), Pearson correlation coeffi i cient (R) of 10-fold cross validation based upon various algorithms are compared in Fig. S2. Apparently, the SVR-rbf model outperforms the others, which has a higher R and a smaller RMSE.Accordingly, the SVR-rbf was determined as the machine learning algorithm to construct the specific model for predicting the hardness of HEAs.
+
+
+$$\sum_{\mathrm{j}=1}^{\mathrm{m}}\mathrm{a}_{\mathrm{ij}}\mathrm{x}_{\mathrm{j}}+\mathrm{b}_{\mathrm{i}}=\mathrm{c}_{\mathrm{i}}\mathrm{i}=1,2$$
+
+where j $(j=1,...,m)$ is one of features of the visual sample, m is the number of features,$\mathsf{a}_{\mathrm{ij}}$ ,b is the coefi cient determined by the Fisher model, c is the projection value of the Fisher model. To get the only solution, we input m-2 average feature values of positive samples (Hardness > 600 HV) as the determinative conditions.Based on the two relationships combining with the determinative conditions, we can get the features of visual sample corresponding to the IP in the original m-dimensional space.
+
+## 2.3. Computational details
+
+In the current study, HyperMiner (a data mining software package) and OCPMDM(an online computation platform for materials data mining) developed at our laboratory were adopted to perform most machine learning calculations. The free version of the HyperMiner is available on the website of our laboratory (http://materials-data-mining.com/home). And the web server for OCPMDM can be freely accessible at URL: http://materials-data-mining.com/ocpmdm/. Besides, SHAP, best-subset
+
+## 3.1. Feature selection
+
+To obtain the most representative subset of features, the fourstep feature selection was performed. The first step of four-step feature selection is to remove features with high correlations.Fig. 2(a) is shown to illustrate the procedure of removing highly
+
+
+> [图表/图片内容]: 0.87
+(a)Two features (b)
+
+0.86
+0.85
+Calculate r 
+
+0.84
+R 0.83
+Other feature Yes 0.82
+combinations |r...
+
+
+**Fig. 2. The process of feature selection.(a) Correlation screening.(b) Feature selection based on RF. (c) Forward selection. (d) Best-subset selection.**
+
+correlated features. In the light of published Ref. [64], 0.95 was determined as the  threshold. If the Pearson correlation coeffi icient between two features is larger than 0.95, only the one with the minor modeling error is retained. After this procedure, the number of features was reduced from 142 to 85.
+
+
+**The key features screened out by using four-step feature selection.**
+
+
+<html><body><table><tr><td>Abbreviation</td><td>Description</td></tr><tr><td>ADAW</td><td>The average deviation of the atomic weight for the alloy</td></tr><tr><td>ADC</td><td>The average deviation of the column for the alloy</td></tr><tr><td>ADSV</td><td>The average deviation of the specific volume for the alloy</td></tr><tr><td>VEC</td><td>The valance electron concentration for the alloy</td></tr><tr><td>Tm</td><td>The mean melting point for the alloy</td></tr></table></body></html>
+
+The second step is to remove the less important features by utilizing RF algorithm. The RF can rank the importance of each feature. If the importance of one feature is less than a certain threshold, it can be considered unnecessary. The key challenge is how to determine the threshold. In this step, a relationship curve between  threshold and coefi  cient of determination $\left(\mathbb{R}^2\right)$ )was plotted in Fig. 4(b) to determine the optimal threshold for feature selection. It can be detected that setting the cutoff value to 0.013 is the best choice. The features selected by RF were listed in Table S2.
+
+set minimizing the model error. The 10-fold cross validation errors of the SVR-rbf model based on different subset of features were illustrated in Fig. 2(d). Ultimately, after the four-step feature selection, 5 key features were selected from 142 features, which were listed in Table 1. Interestingly, three of the five key features are the atomic parameters we generated by utilizing the method proposed by ward et al. [44], and the remaining two features are the parameters regarding phase formation based on domain knowledge.Among the generated atomic features, only the features related to the property differences were screened out. It seems that the features concerning property differences amongst different elements contribute more to the model prediction than those features that reflect the mean property values. Such a result is understandable since these differences reflect the structural misfi ts, which will influence the degree of lattice distortion [67] and further affect the hardness.
+
+The third step is forward selection. Forward selection always starts with an empty set and incrementally adds a feature to the target feature subset from the candidate feature set [65]. The first feature chosen to construct the SVR-rbf model tends to be the most closely related to the target property, then at each subsequent step,the feature with the greatest net correlation related to the target is selected to enter the model. The process of forward selection was shown in Fig. 2(c), where the model yielded the smallest error when the number of features increased to 10.
+
+The final step is best-subset selection [66]. We established a number of models by considering all possible subsets of the ten features screened out in the previous step to identify the best sub
+
+
+> [图表/图片内容]: 10001000
+(a) N = 296(b)N = 74
+ee eeee eeee 800600400200R=0.98RMSE = 47☆2e e eereeee 800600400200江R=0...
+
+
+**Fig. 3. The predicted hardness as a function of the observed hardness for (a) the training set, (b) the testing set, (c) 10-fold cross validation of training set, (d) LoocV of training set (N represents the number of the samples).**
+
+the performance of the acquired SVR-rbf model and guard against overfitting, 10-fold cross validation and LooCV were conducted simultaneously on the training set. Parts(c) and (d) of Fig. 3 plotted the predicted values as a function of the experimental values of the hardness of HEAs based on the 10-fold cross validation and LOocV of the training set, respectively. The R of 10-fold cross validation and LooCV both reach up to 0.94, which implies our model performs well.
+
+## 3.2.Model constructionandevaluation
+
+With the keyfeatures as inputs, we employed the SVR-rbfto establish the regression model for the Vickers hardness of HEAs.RMSE and R were taken as the evaluation metrics to estimate the error and correlation between predicted and experimental hardness. Figs. 3(a) and Fig. 3(b) depicted the predicted hardness versus the corresponding experimental hardness of HeAs in the training set and testing set, respectively. It can be observed that most data points distributed around the diagonal line (as displayed by the dark blue solid line), manifesting that there exists a fairly good consistency between predictions and the measurements. Additionally, we further linearly fi tted the predicted hardness in respect of the measured hardness, as displayed by the orange solid line. The closer the orange line to the diagonal dark blue line is, the higher the prediction accuracy of the model is. Meanwhile, it should not be ignored that a few points deviated quite obviously. The discrepancy between the predicted hardness and the measured hardness might arise from lacking adequate data in the corresponding area and the inhomogeneity of hardness for as-cast HeAs.
+
+Furthermore, to reduce the impact of random partition of the training set and testing set on the model, the original data set was randomly split into the training set and testing set at the proportion of 4:1 for 3 times. And then the model was reconstructed according to the selected features. For 10-fold cross validation and LOoCV, the mean R of the training set was 0.94 and 0.95, respectively. As for the testing set, the mean value of R was 0.93. Such results reveal the robustness and generality of the trained model to some degree.
+
+## 3.3. Composition optimization
+
+Cross validation [38] means that the dataset is split into k equal-sized subsets, and each time k-1 subsets are used as the training set, the remaining one subset is used as the validation data to test the model. Such a process is repeated k times to obtain the predicted value of each sample. When $k=10$ , it refers to 10fold cross validation. When k is equal to the number of samples,it represents leave one out cross validation (LOocV). To evaluate
+
+Building a predictive model is not our major goal, we aim at guiding the rational design of the high-performance HEAs through the trained model and therefore facilitate the discovery of advanced materials. To achieve this end, the inverse projection developed in our research group [50] was adopted to search the optimized composition.
+
+
+$$\begin{aligned}&-0.102[\mathrm{ADAW}]+0.41[\mathrm{ADC}]-1.006[\mathrm{VEC}]+0.409[\mathrm{ADSV}]\\ &+2.834\times10^{-3}\times[\mathrm{T}_{\mathrm{m}}]+1.261=0\\ \end{aligned}$$
+
+
+> [图表/图片内容]: 2.0★Designed samples 
+
+Positive samples 
+
+1.5(Hardness > 600HV)
+
+Negative samples 
+
+1.0(Hardness < 6...
+
+Since the positive samples are mainly aggregated on the right side, i.e., the optimal zone, where the new sample with enhanced hardness may be distributed according to the trend. Furthermore,given that the new candidates are preferably located near the samples with higher hardness, we designed two samples marked by the purple five-pointed star in Fig. 4. These two designed points can be regarded as the extrapolations of known samples with higher hardness. The features of designed samples in the original space can be obtained by using the IP. The corresponding compositions of the two designed samples are $\mathsf{C o}_{18}\mathsf{C r}_{7}\mathsf{F e}_{35}\mathsf{N i}_{5}\mathsf{V}_{35}$ and $\mathrm{Al}_{20}\mathrm{Cr}_{5}\mathrm{Cu}_{15}\mathrm{Fe}_{15}\mathrm{Ni}_{5}\mathrm{Ti}_{10}\mathrm{V}_{30}$ ,respectively. The hardness of designed samples was predicted by using the established SVR-rbf model, the results are summarized in Table 2. Briefly speaking, the IP not only provides us with the classification diagram to prevent computation from negative samples $(\mathrm{hardness}<600\mathrm{HV})$ , but also enable us to quickly search the new compositions of interest located in the optimal zone of positive samples (hardness > 600 HV).
+
+Apart from the approach mentioned above, the high-throughput screening (HTS) was employed as well to down-select possible composition combinations to discover compositions with desired hardness since some alloy systems have few samples and do not exist a clear distribution tendency on the projection map of pattern recognition. Except for the vanadium-containing alloys,$\mathrm{A l}_{20}\mathrm{C r}_{20}\mathrm{F e}_{20}\mathrm{N i}_{20}\mathrm{M o}_{20}$ ,alloy possesses the highest hardness in the original database, thereby the virtual composition space of Al-CrFe-Ni-Mo alloy system was fabricated to screen out the optimized compositions. The machine learning model of SVR-rbf available was used to predict the hardness of virtual samples based on the five key features of those compositions. According to predictive results, the candidate HEAs of $\mathrm{Al}_{21}\mathrm{Cr}_{27}\mathrm{Fe}_{29}\mathrm{Ni}_{5}\mathrm{Mo}_{18}$ with higher hardness was screened out.
+
+
+**Fig. 4. Materials pattern recognition of different samples by using Fisher method (For interpretation of the references to color in this figure, the reader is referred to the web version of this article.)**
+
+The IP based upon pattern recognition is a pragmatic approach for new materials design. The process can be summarized as follows. The data set of machine learning can be divided into 'positive' samples with relatively good properties and 'negative'ones with poor properties. According to the distribution trend of positive" and "negative" samples on the two-dimensional classification diagram of pattern recognition, new projection points corresponding to potential samples with high-performance properties could be designed in the optimal zone. Then, their features in the original space can be deduced by using the algorithm of IP. To obtain the reasonable compositions of IP, we fabricated vast virtual samples by considering that the atom percentage of each element varied between 5 and 35% with certain step size, and then calculated the Euclidean distance between the designed projection point and the generated virtual samples. At last, the composition of the virtual sample nearest to the designed projection point was recognized as the alloy composition of the designed projection point with the high-performance property.
+
+## 3.4. Experimental validation
+
+To verify the model prediction, the three compositions recommended by IP and HTS were synthesized and characterized.The experimental results are also listed in Table 2. Obviously,$\mathsf{C o}_{18}\mathsf{C r}_{7}\mathsf{F e}_{35}\mathsf{N i}_{5}\mathsf{V}_{35}$ displays superior hardness, which is 24.8%higher than the best value in the original database. The prediction error is 12.7%, which is consistent with the model error previously evaluated. As for $\mathrm{Al}_{20}\mathrm{Cr}_{5}\mathrm{Cu}_{15}\mathrm{Fe}_{15}\mathrm{Ni}_{5}\mathrm{Ti}_{10}\mathrm{V}_{30}$ , the prediction error is 58.2%. The distinctive discrepancy between prediction and experiment may arise from the great risk of the extrapolation prediction of the model outside the original dataset. In addition, there are innumerable solutions of IP point in high dimensional space. As for $\mathrm{Al}_{21}\mathrm{Cr}_{27}\mathrm{Fe}_{29}\mathrm{Ni}_{5}\mathrm{Mo}_{18}$ :recommended by HTS, the prediction error is 39.1%, which may stem from insuffi cient known data in the search space. Specifically speaking, there are only four samples belong to the Al-Cr-Fe-Ni-Mo alloy system in our dataset. Such a prediction error can be reduced by assembling more experimental results in future investigations. The case study indicates that the inverse projection method might be helpful in the design of high-performance HEAs.
+
+Considering that vanadium-containing alloys possess high hardness in the original data set, thus, the IP approach was employed to design vanadium-containing HEAs with enhanced hardness. In our database, there are 34 samples of vanadium-containing HEAs,which can be sorted into 15 positive samples with the hardness more than 600 HV and 19 negative samples with the hardness less than 600 HV. Fig. 4 illustrates the vanadium-containing HEAs pattern recognition of different samples by using Fisher method.Fisher method [68] is one of statistical pattern recognition methods. It can be used to classify different kinds of samples by adopting the discriminant function of maximizing the ratio of the difference between the means of two groups to the within-groups standard deviation. For sample sets with "biased" data distribution, i.e.,two different types of samples are distributed in a clear trend in a certain direction, the Fisher method can often be applied to obtain a pattern recognition projection with good classification results.
+
+## 4. Discussion
+
+It can be found that the two types of samples are well distributed on the left and right side of the dotted line except for four misclassified points. Since the abscissa Fisher (1) of Fig. 4 can be represented as the linear combination of features adopted in the model, the equation of the dotted line can be expressed as Eq.(1)corresponding to Fisher $(1)=0.1$ :
+
+## 4.1. Relationships between key factors and hardness
+
+To further elucidate the relationships between features and hardness, SHAP was introduced to explain the model, which is a novel unified approach proposed by Lundberg and Lee in 2017 for interpreting model predictions [69]. Briefly speaking, the algorithm
+
+
+**Table 2**
+
+
+**The hardness of optimized compositions.**
+
+
+<html><body><table><tr><td>Approach</td><td>Composition</td><td>Predicted HV</td><td>Experimental HV</td><td>MRE</td></tr><tr><td>IP</td><td>; $\mathrm{Co_{18}Cr_{7}Fe_{35}Ni_{5}V_{35}}$</td><td>1002</td><td>1148</td><td>-12.7%</td></tr><tr><td>IP</td><td>$\mathrm{Al}_{20}\mathrm{Cr}_{5}\mathrm{Cu}_{15}\mathrm{Fe}_{15}\mathrm{Ni}_{5}\mathrm{Ti}_{10}\mathrm{V}_{30}$</td><td>1028</td><td>650</td><td>+58.2%</td></tr><tr><td>HTS</td><td>$\mathrm{Al}_{21}\mathrm{Cr}_{27}\mathrm{Fe}_{29}\mathrm{Ni}_{5}\mathrm{Mo}_{18}$</td><td>960</td><td>690</td><td>+39.1%</td></tr></table></body></html>
+
+
+> [图表/图片内容]: (a)High (b)Tm 26VEC 
+ADAW ADSV ADC  e ADAW ADSV ADC 4343.450.2Tm 
+VEC 65.3
+Low -150 -100-50050100150...
+
+
+**Fig. 5. The feature analysis via SHAP. (a) SHAP value distribution of different samples. (b)Feature importance ranked by SHAP.**
+
+was often mentioned in the field of high entropy alloys. In fact,we have taken δ into account in our original feature pool, but it was fi ltered out during the process of feature selection. The  possible explanation is that the δ is computed from an approximate expression, which has some diffi culties in describing the exact size misfi t [67,72]. From Fig. 5(a), what we could fi nd is that the infl uences of these above-mentioned three features display a fairly consistent positive tendency on hardness. The greater the size difference, the higher the hardness. Such results possibly can be explained by the lattice distortion [8] and solid solution strengthening theory [73,74], different sizes of atoms make the bond length increase or shorten, and the lattice is seriously distorted, thereby increasing the hardness. Moreover, when the atomic size difference of the alloy is relatively large, hard intermetallic compounds tend to form inside the alloy, which would increase the hardness of the alloy [8].
+
+is capable of interpreting feature importance from complex machine learning models based on Shapley values, which was proposed in the 1950s to estimate the contributions of individual players to a collaborative game.
+
+As shown in Fig.$5(a)$ , the SHAP approach was utilized tocalculate feature importance and assess the effect of features on our model prediction. The abscissa denotes SHAP value, and the vertical axis represents different features, each dot stands for a sample. A positive/negative SHAP value of a feature means the feature improves/weakens the hardness. The color of the point represents the size of the feature value. The yellower the color is, the larger the value of the feature is. Conversely, the greener the color is, the smaller the value of the feature is. For a single feature, the wider the horizontal coverage is, the greater the infl uence of the feature on the prediction result is, that is, the more important the feature is. The means of the absolute SHAP values of a feature can be regarded as the importance of the feature, which was displayed in Fig. 5(b).
+
+The last feature to mention is $\mathrm{T_m}$ ,it refers to the mean melting point of the HEAs. What we could see in Fig. 6(b) is that $\mathrm{T_m}$ impairs or improves the hardness slightly when $\mathrm{T_{m}}<$ 1800 K.While in $T_{m}>1800$ K area, the effect  of $\mathrm{T_m}$ is mainly positive. Making further efforts to analyze the data scattering in $T_{m}>1800\ K area$ ，it was found that the composition of these samples basically involves some elements with a high melting point, such as Ti, Mo,V and $\mathrm{Cr},$ which have been demonstrated to improve the strength and hardness of the alloy in previous studies [75-79].
+
+VEC is a fundamental physical factor for phase formation, which has been employed as a vital indicator to modulate brittleness and ductility of materials [70]. As is evident from Fig. 5(b), VEC ranks as the most important factor among these five features. In other words, VEC plays an important role in predicting the hardness of HEAs. From Fig.$5(a)$ ,we can see that the smaller the VEC value, the larger the SHAP value, that is, the greater the hardness. Such a negative tendency is supported by several studies as well [31,36,71]. Fig. 6(a) shows the SHAP value changes with VEC.What's interesting is that the VEC exerts a positive infl uence on hardnesswhen $VEC<7.5$ ,while VEC exerts a negative infl uence on hardness when $VEC>7.5$ . The result is quite approaching the VEC criterion [45], that is, the BCC solid solution phase is more stable when $VEC<6.87$ . For FCC phase and BCC phase formed by the same element, BcC structure possesses more severe lattice distortion, which leads to more significant solid solution strengthening effect of BCC phase, thereby increase the hardness of alloys. For elements such as Al, Cr, Ti, Mo, and V, due to their low VEC, an increase in their content would decrease the VeC of the alloys, which might give rise to an increase in hardness.
+
+## 4.2. Reliability and applicability of the presented method
+
+To further validate the reliability of the presented method and prove its applicability to other as-cast HEAs, 138 sets of hardness data on $Co-Cr-Ti-Mo-W$ high entropy alloys at as-cast state were assembled from published literature [80] (see in Table S3). Notably, these data were prepared by a home-developed all-process high-throughput alloy synthesis system, which is distinct from the training data assembled from various publications and different research groups. Additionally, the $\mathrm{Co-Cr-Ti-Mo-W}$ alloy system and W element have not appeared in the original training set. According to each element's composition and atomic parameters, the key features were calculated, and then the hardness predictive model was built with the above-mentioned features as inputs. The modeling results are shown in Fig. 7, the prediction errors of hardness for direct modeling and the LOoCV are 7% and 11%, respectively. The
+
+As for the other four features, especially ADAW, ADSV, and ADC,these three features mainly reflect the atomic size difference in HEAs, which characterizes the degree of lattice distortion. Their meanings are very close to the meaning of the parameter (δ) that
+
+
+> [图表/图片内容]: SHAP value SHAP value 230.0250.0200(a)250(b)
+150★200e 1005000.000150100500.000-500-100-50-150-130.0-...
+
+
+**Fig. 6. The SHAP value changes with (a) VEC, (b) Tm.**
+
+
+> [图表/图片内容]: 10001000(a) N = 138(b) N = 138R=0.88冷*☆*☆麦☆袋R=0.8☆0☆☆☆ee ese eeeeee 800600400200MRE = 7%*☆☆☆☆从☆H *☆☆...
+
+
+**Fig. 7. The predicted hardness as a function of the observed hardness for: (a) direct modeling, (b) LooCV of Co-Cr-Ti-Mo-W HEAs (N represents the number of the samples).**
+
+results indicate that these key features also have a certain effect on the hardness prediction of $Co-Cr-Ti-Mo-W HEAs$ , which further demonstrates that the key features that we found have a certain generalization ability for the hardness prediction of other high entropy alloy systems. The four-step feature selection method that we presented successfully capture the key descriptors.
+
+can expeditiously capture the implicit information between components and properties of HEAs, although different work involves many different aspects on the research perspective, the specific dataset, and the modeling method, etc. Most important of all, a promising high entropy alloy with superior hardness was discovered via our MADS.
+
+## 4.3. The comparison between the work of predecessors and the present work
+
+## 5. Conclusion
+
+To summarize, an ML-based alloy design system, which incorporates database establishment, model construction, composition optimization and experimental validation, was first put forward to facilitate the rational design of HEAs with improved hardness.ADAW,ADC,ADSV, VEC and $\mathrm{T_m}$ were recognized as the key features that closely related to the hardness of as-cast HEAs through the four-step feature selection method. Using the five key features as inputs, the regression model of SVR-rbf was established to predict the hardness of HEAs. Notably, the R of the model reached 0.94 for both the independent testing set and LooCV, manifesting the model performs fairly well. Then, the inverse projection based on pattern recognition combing high-throughput screening was applied to guide the composition optimization of HEAs. Three optimized compositions were synthesized to test our predictions of HEAs hardness. One optimized sample exhibits superior hardness, which is 24.8% higher than the highest hardness in the orig
+
+As for hardness, Wen et al. have reported the discovery of novel HEAs with higher hardness via machine learning and statistical inference [28], where the target elements include six elements and the highest number of alloy element is six-component alloy. While in our work, ten elements were included in the database, and the seven-component alloy was considered. In addition, it must be mentioned that the mean relative error (MRE) of our model is 14.2%, implying the good performance of our model for predicting the hardness of HEAs. Overall, although the precision of our model may not be as accurate as our predecessors, our model might have wider applicability to other alloy systems because we have taken more alloy systems, more principal elements into account.
+
+Xiong et al. [31] predicted the hardness and ultimate tensile strength of concentrated complex alloys (CcAs) based on the phase prediction of CCAs. Both Xiong's and our work prove that ML
+
+inal dataset. Additionally, SHAP was introduced to uncover some implicit information between the key features and the hardness of as-cast alloys. The results indicate VEC is the most significant variable, which exercises a positive impact on hardness when VEC $ <7.5$ . Moreover, we demonstrated the five key features associated with hardness hold the great potential to predict the hardness of other HEAs systems. The MADS we developed here not only could be used to guide the discovery of high-performance HEAs, but also could be extended to the design of other multi-component materials.
+
+- [16] W.Y. Wang, S.L. Shang, Y. Wang, F. Han, K.A. Darling, Y. Wu, X. Xie, O.N. Senkov,J. Li, X.D. Hui, K.A. Dahmen, P.K. Liaw, L.J. Kecskes, Z.K. Liu, Atomic and electronic basis for the serrations of refractory high-entropy alloys, NPJ Comput.Mater.3 (2017) 1-9.
+[17] M.C. Troparevsky, J.R. Morris, P.R.C. Kent, A.R. Lupini, G.M. Stocks, Criteriafor predicting the formation of single-phase high-entropy alloys, Phys. Rev. X 5(2015)1-6.
+[18] P. Sarker, T. Harrington, C. Toher, C. Oses, M. Samiee, J.P. Maria, D.W. Brenner,
+K.S. Vecchio, S. Curtarolo, High-entropy high-hardness metal carbides discovered by entropy descriptors, Nat. Commun. 9 (2018) 1–10.[19] S. Lu, Q. Zhou, Y. Guo, Y. Zhang, Y. Wu, J. Wang, Coupling a crystal graph multilayer descriptor to active learning for rapid discovery of 2D ferromagnetic semiconductors/half-metals/metals, Adv. Mater. 32 (2020) 200268.[20] S. Lu, Q. Zhou, L. Ma, Y. Guo, J. Wang, Rapid discovery of ferroelectric photovoltaic perovskites and material descriptors via machine learning, Small Methods3 (2019)1-10.
+[21] Q. Tao, T.Lu, Y. Sheng, L. Li, W. Lu, M. Li, Machine learning aided designof perovskite oxide materials for photocatalytic water splitting, J. Energy Chem.
+60(2021) 351-359.
+[22] Y. Sheng, Y. Wu, J.Yang, W.Lu, P. Villars, W.Zhang, Active learning forthe power factor prediction in diamond-like thermoelectric materials, NPj Comput.
+Mater. 6 (2020) 1-7.
+[23] C. Zou, J. Li, W.Y. Wang, Y. Zhang, D. Lin, R. Yuan, X. Wang, B. Tang, J. Wang,
+X. Gao, H. Kou, X. Hui, X. Zeng, M. Qian, H. Song, Z.K. Liu, D. Xu, Intrating data mining and machine learning to discover high-strength ductile titanium alloys, Acta Mater. 202 (2021) 211-221.
+[24] C. Te Wu,H.T. Chang,C.Y.Wu,S.W. Chen, S.Y. Huang, M. Huang,YT. Pan,
+P. Bradbury, J. Chou, H.W. Yen, Machine learning recommends affordable new Ti alloy with bone-like modulus, Mater. Today 34 (2020) 41-50.[25] Y. Liu, B. Guo, X. Zou, Y. Li, S. Shi, Machine learning assisted materials design and discovery for rechargeable batteries, Energy Storage Mater. 31 (2020)
+434-450.
+[26] Q. Tao, P. Xu, M. Li, W. Lu, Machine learning for perovskite materials deign and discovery, NPJ Comput. Mater. 7 (2021) 1-18.
+[27] X.T. Li, L. Chen, C. Shang, Z.P. Liu, In situ surface structures of PdAg catalyst and their infl uence on acetylene semihydrogenation revealed by machine learning and experiment, J. Am. Chem. Soc. 143 (2021) 6281-6292.[28] C.Wen, Y. Zhang, C. Wang, D.Xue, Y. Bai, S. Antonov, L. Dai, T. Lookman,Y.Su,
+Machine learning assisted design of high entropy alloys with desired property,
+Acta Mater. 170 (2019) 109-117.
+[29] J.F. Durodola, Machine learning for design, phase transformation and mechanical properties of alloys, Prog. Mater. Sci. 123 (2021) 100797.[30] Z. Pei, J. Yin, J.A. Hawk, D.E. Alman, M.C. Gao, Machine-learning informed prediction of high-entropy solid solution formation: beyond the Hume-Rothery rules, NPJ Comput. Mater. 6 (2020) 50.
+[31] J. Xiong,S.Q. Shi, T.Y. Zhang, Machine learning of phases and mechanical properties in complex concentrated alloys, J. Mater. Sci. Technol. 87 (2021)
+133-142.
+[32] U. Bhandari, M.R. Rafi, C. Zhang, S. Yang, Yield strength prediction of high-entropy alloys using machine learning, Mater. Today Commun. 26 (2021) 101871.[33] R. Machaka, Machine learning-based prediction of phases in high-entropy alloys, Comput. Mater. Sci. 188 (2021) 110244.
+[34] Y. Zeng, M. Man, K. Bai, Y.W. Zhang, Revealing high-fidelityphase selection rules for high entropy alloys: a combined CALPHAD and machine learning study, Mater. Des. 202(2021)109532.
+[35] G. Kim, H. Diao,C. Lee, A.T.Samaei, T. Phan, M. deJong,K. An, D. Ma,
+P.K. Liaw, W. Chen, First-principles and machine learning predictions of elasticity in severely lattice-distorted high-entropy alloys with experimental validation, Acta Mater. 181 (2019) 124-138.
+[36] J.M. Rickman, H.M. Chan, M.P. Harmer, J.A. Smeltzer, C.J. Marvel, A. Roy, G. Balasubramanian, Materials informatics for the screening of multi-principal elements and high-entropy alloys, Nat. Commun. 10 (2019) 1-10.[37] Y. Zhang, C. Wen, C. Wang, S. Antonov, D. Xue, Y. Bai, Y. Su, Phase prediction in high entropy alloys with a rational selection of materials descriptors and machine learning models, Acta Mater. 185 (2020) 528-539.[38] W. Huang, P. Martin, H.L. Zhuang, Machine-learning phase prediction of high-entropy alloys, Acta Mater. 169 (2019) 225-236.
+[39] M.I. Maulana Kusdhany, S.M. Lyth, New insights into hydrogen uptake on porous carbon materials via explainable machine learning, Carbon 17 (2021)
+190-201 N.Y.
+[40] R. Rodriguez-Pérez, J. Bajorath, Interpretation of machine learning models using shapley values: application to compound potency and multi-target activity predictions, J. Comput. Aided Mol. Des. 34 (2020) 1013-1026.[41] N.T.P. Hartono, J. Thapa, A. Tiihonen, F. Oviedo, C. Batali, J.J. Yoo, Z. Liu, R. Li,
+D.F. Marrón, M.G. Bawendi, T. Buonassisi, S. Sun, How machine learning can help select capping layers to suppress perovskite degradation, Nat. Commun.
+11 (2020) 1-9.
+[42] S. Liu, B.B. Kappes, B. Amin-ahmadi, O. Benafan, X. Zhang, A.P. Stebner, Physics-informed machine learning for composition - process - property design:
+shape memory alloy demonstration, Appl. Mater. Today 22 (2021) 100898.
+## Declaration of Competing Interest
+
+We declare that we do not have any commercial or associative interest that represents a conflict of interest in connection with the work submitted.
+
+## Acknowledgment
+
+The authors gratefully acknowledge of  the  support  of National Key Research and Development Program of China (No. 2018YFB070440O) and Natural Science Foundation of China (No. 51925103).
+
+## Supplementary materials
+
+Supplementary material associated with this article can be found, in the online version, at doi:10.1016/j.actamat.2021.117431.
+
+## References
+
+- [1] J.W. Yeh, S.K. Chen, S.J. Lin, J.Y. Gan, T.S. Chin, T.T. Shun, C.H. Tsau, S.Y. Chang,Nanostructured high-entropy alloys with multiple principal elements: novel alloy design concepts and outcomes, Adv. Eng. Mater. 6 (2004) 299-303.[2] B. Cantor, I.T.H. Chang, P. Knight, A.J.B. Vincent, Microstructural development in equiatomic multicomponent alloys, Mater. Sci. Eng. A 375-377 (2004) 213-218.[3] Y.F. Ye,Q.Wang,J.Lu,C.T.Liu,Y.Yang, High-entropy alloy:challengesand prospects, Mater. Today 19 (2016) 349-362.
+[4] O.N. Senkov, D.B. Miracle, K.J.Chaput, J.P. Couzinie, Developmentand exploration of refractory high entropy alloys - a review, J. Mater. Res. 33 (2018)
+3092-3128.
+[5] E.P. George,D. Raabe,R.O. Ritchie, High-entropyalloys,Nat.Rev. Maer.4(2019)515-534.
+[G.
+Rev. Mater.6 (2021) 730-755.
+[7] Y. Zhang, T.T.Zuo,Z. Tang, M.C.Gao,K.A. Dahmen,PK. Liaw,Z.P. Lu,Microstructures and properties of high-entropy alloys, Prog. Mater. Sci. 61 (2014)
+1-93.
+[8]D.B. Mracle,ON.enkov,Aciticalreviewohighentopyalloyandrelated concepts, Acta Mater. 122 (2017) 448-511.
+[B.Catlto-opaolla.i10(2020)100754.
+[10] L. Fan,T.Yang,Y.Zhao,J.Luan,G.Zhou, H.Wang,Z. Jiao,C.T.Liu,Ultrahigh strength and ductility in newly developed materials with coherent nanolamellar architectures, Nat. Commun. 11 (2020) 1-8.
+[11] Z. He,N. Jia, H.Yan,Y. Shen, M. Zhu, X. Guan, X. Zhao, S. Jin, G. Sha,Y. Zhu,
+C.T. Liu, Multi-heterostructure and mechanical properties of N-doped FeMnCoCr high entropy alloy, Int. J. Plast. 139 (2021) 102965.[12]P.hi,Y.hog,Y.Li,W.Re,T.heg,.h,B.Yag,J.g,P.Hu,Y.hang,
+P.K. Liaw,Y. Zhu, Multistage work hardening assisted by multi-type twinning in ultrafi ne-grained heterostructural eutectic high-entropy alloys, Mater. Today 41 (2020) 62-71.
+[13] M. Naeem, H. He, S. Harjo, T. Kawasaki, F. Zhang, B.Wang, S. Lan, Z. Wu, Y. Wu,
+Z. Lu, C.T. Liu, X.L. Wang, Extremely high dislocation density and deformation pathway of CrMnFeCoNi high entropy alloy at ultralow temperature, Scr.
+Mater. 188 (2020) 21-25.
+[14] O.N. Senkov, J.D. Miller, D.B. Miracle, C. Woodward, Accelerated exploration of multi-principal element alloys with solid solution phases, Nat. Commun. 6(2015)1-10.
+[15] O.N. Senkov, J.D. Miller, D.B. Miracle, C. Woodward, Accelerated explorationof multi-principal element alloys for structural applications, Calphad. 50(2015)
+32-48 Comput. Coupling Phase Diagrams Thermochem..
+- [63] V. Vapnik, The Nature of Statistical Learning Theory, The nature of statistical learning theory, Springer, New York, 1995.
+[64] R. Yuan, Z. Liu, P.V. Balachandran, D. Xue, Y. Zhou, X. Ding, J. Sun, D.Xue,
+T. Lookman, Accelerated discovery of large electrostrains in BaTiO3-based piezoelectrics using active learning, Adv. Mater. 30 (2018) 1-8.[65] Z. He, L. Li, Z. Huang, H. Situ, Quantum-enhanced feature selection with forward selection and backward elimination, Quantum Inf. Process. 17 (2018)
+1-11.
+[66] L. Wang, Y. Wang, Q. Chang, Feature selection methods for big data bioinformatics: a survey from the search perspective, Methods 111 (2016) 21-31.[67] C.Wen,C.Wang, Y. Zhang,S.Antonov, D.Xue, T.Lookman,Y.Su, Modeling solid solution strengthening in high entropy alloys using machine learning,
+Acta Mater. 212 (2021) 116917.
+[68] G. Rasmussen, G. Ritter, S. Lowry, T. Isenhour, Fisher discriminant functions for a multilevel mass spectral filter network, J. Chem. Inf. Comput. Sci. 19 (1979)
+255-259.
+[69] S.M. Lundberg,S.I. Lee, A unified approach to interpreting model predictions,
+Adv. Neural Inf. Process. Syst. 30 (2017) 4766-4775 2017-Decem.[70] X. Gu, C. Liu, H. Guo, K. Zhang, C. Chen, Sorting transition-metal diborides:
+new descriptor for mechanical properties, Acta Mater. 207 (2021).[71] R. Chen, G. Qin, H. Zheng, L. Wang, Y. Su, Y.L. Chiu, H. Ding, J. Guo, H. Fu, Composition design of high entropy alloys using the valence electron concentration to balance strength and ductility, Acta Mater. 144 (2018) 129-137.[72] H. Song, F. Tian, Q.M. Hu, L. Vitos, Y. Wang, J. Shen, N. Chen, Local lattice distortion in high-entropy alloys, Phys. Rev. Mater.1 (2017) 023404.[73] I. Toda-Caraballo, PE.J. Rivera-Díaz-Del-Castillo, Modelingsolid solution hardening in high entropy alloys, Acta Mater. 85 (2015) 14–23.[74] S.I. Rao, C. Woodward, B. Akdim, O.N. Senkov, D. Miracle, Theory of solid solution strengthening of BCC Chemically Complex Alloys, Acta Mater. 209 (2021)
+116758.
+[75] N.D.  Stepanov,  D.G. Shaysultanov, G.A. Salishchev,M.A.Tikhonovsky,
+E.E. Oleynik, A.S. Tortika, O.N. Senkov, Effect ofv content on microstructure and mechanical properties of the CoCrFeMnNiVx high entropy alloys, J.
+Alloy. Compd.628 (2015) 170-185.
+[76] H. Wu, S. Huang, C. Zhu, H. Zhu, Z. Xie, Infl uence of Cr content on the microstructure and mechanical properties of CrxFeNiCu high entropy alloys, Prog.
+Nat. Sci. Mater. Int. 30 (2020) 239-245.
+[77] Y.X. Zhuang, X.L. Zhang, X.Y. Gu, Effect of molybdenum on phases, microstructure and mechanical properties of Al0.5CoCrFeMoxNi high entropy alloys, J. Alloy. Compd. 743 (2018) 514-522.
+[78] P.Cui,Y.Ma,L. Zhang, M. Zhang, J. Fan,W. Dong, P. Yu,G.Li, R. Liu, Effectof Ti on microstructures and mechanical properties of high entropy alloys based on CoFeMnNi system, Mater. Sci. Eng. A 737 (2018) 18-204.[79] S. Sheikh, S. Shafeie, Q. Hu, J. Ahlstrom, C. Persson, J. Vesely, J. Zyka, U. Klement, S. Guo, Alloy design for intrinsically ductile refractory high-entropy alloys, J. Appl. Phys. 120 (2016) 164902.
+[80] J. Wang, B. Xiao, Y. Liu, Machine learning assisted high-throughput experiments accelerates the composition design of hard high-entropy alloy CoxCryTizMouWv, Mater. China. 39 (2020) 269-277.
+- [43] K. Kaufmann, K.S. Vecchio, Searching for high entropy alloys: a machine learning approach, Acta Mater. 198 (2020) 178-222.
+[44] L. Ward, A. Agrawal, A. Choudhary, C. Wolverton, A general-purpose machine learning framework for predicting properties of inorganic materials, NPj Comput.Mater.2 (2016)1-7.
+[45] S. Guo, C. Ng, J. Lu, C.T. Liu, Effect of valence electron concentration on stability of fcc or bcc phase in high entropy alloys, J. Appl. Phys. 109 (2011) 103505.[46] L. Zhang, H. Chen, X. Tao, H.Cai, J. Liu, Y.Ouyang,Q. Peng, Y. Du, Machine learning reveals the importance of the formation enthalpy and atom-size difference in forming phases of high entropy alloys, Mater. Des. 193 (2020)
+108835.
+[47] Y. Zhang, Y.J. Zhou, J.P. Lin, G.L. Chen, P.K. Liaw, Solid-solution phase formation rules for multi-component alloys, Adv. Eng. Mater. 10 (2008) 534-538.[48] X. Yang, Y. Zhang, Prediction of high-entropy stabilized solid-solution in multi-component alloys, Mater. Chem. Phys. 132 (2012) 233–238.[49] J. Cai, J. Luo, S. Wang, S. Yang, Feature selection in machine learning: a new perspective, Neurocomputing 300 (2018) 70-79.
+[50] W. Lu, R. Xiao, J. Yang, H. Li, W. Zhang, Data mining-aided materials discovery and optimization, J. Mater.3 (2017)191-201.
+[51] Y. Wang, Y. Tian, T. Kirk, O. Laris, J.H. Ross, R.D. Noebe, V. Keylin, R. Arróyave,
+Accelerated design of Fe-based soft magnetic materials using machine learning and stochastic optimization, Acta Mater. 194(2020) 144-155.[52] H. Zhang, H. Fu, X. He, C.Wang, L. Jiang, L.Q. Chen, J.Xie, Dramatically enhanced combination of ultimate tensile strength and electric conductivity of alloys via machine learning screening, Acta Mater. 200 (2020) 803-810.[53] J.L. Rodgers, W.A. Nicewander, Thirteen ways to look at the correlation coefficient, Am. Stat. 42(1988)59-66.
+[54] N. Chen, W. Lu, R. Chen, C. Li, P. Qin, Chemometric methods applied to industrial optimization and materials optimal design, Chemom. Intell. Lab. Syst. 45(1999) 329-333.
+[55] J. Bergstra, D. Yamins, D. Cox, Hyperopt: a python library for optimizingthe hyperparameters of machine learning algorithms, in: Proceedings of the 12th Python in Science Conference SciPy, 2013, pp. 13-19.
+[56] P. Liu, H. Huang, S. Antonov, C.Wen, D. Xue,H. Chen, L. Li, Q. Feng, T. Omori,
+Y. Su, Machine learning assisted design of -strengthened Co-base superalloys with multi-performance optimization, NPj Comput. Mater. 6 (2020) 1-9.[57] C. Wang, H. Fu, L. Jiang, D. Xue, J. Xie, A property-oriented design strategy for high performance copper alloys via machine learning, NPj Comput. Mater. 5(2019)1-8.
+[58] H. Wang, L. Shangguan, J. Wu, R. Guan, Multiple linear regression modeling for compositional data, Neurocomputing 122 (2013) 490-500.[59] R. Hecht-Nielsen, Theory of the backpropagation neural network, Neural Netw.
+1(1988)445.
+[60] J. Friedman, Greedy function approximation: a gradient boosting machine,
+Ann. Stat. 29 (2001) 1189-1232.
+[61] L. Breiman, Random forests, Mach. Learn. 45 (2001) 5-32.[62] Z.Lu,X.Chen,X.Liu,D.Lin,Y.Wu,Y.Zhang,H.Wang,S.Jiang,H.Li,X.Wang,
+Z. Lu, Interpretable machine-learning strategy for soft-magnetic property and thermal stability in Fe-based metallic glasses, NPj Comput. Mater. 6(2020)
+1-9.
